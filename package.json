@@ -1,0 +1,17 @@
+{
+  "name": "meta-ipsum",
+  "version": "1.0.0",
+  "description": "BYO Words - toolkit for making your own Lorem Ipsum generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx jasmine",
+    "build": "npx tsc"
+  },
+  "keywords": [],
+  "author": "vegetabill",
+  "license": "ISC",
+  "devDependencies": {
+    "jasmine": "^3.5.0",
+    "typescript": "^3.9.6"
+  }
+}
