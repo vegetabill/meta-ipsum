@@ -9,8 +9,8 @@
   "scripts": {
     "test": "node -r ts-node/register ./node_modules/.bin/jasmine",
     "build": "rm -rf ./dist && npx tsc",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "lint": "tslint -p ."
+    "format": "npx prettier --write \"lib/**/*.ts\" \"spec/**/*.ts\"",
+    "lint": "npx tslint -p ."
   },
   "keywords": [],
   "author": "vegetabill",
