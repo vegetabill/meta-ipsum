@@ -2,7 +2,10 @@
   "name": "meta-ipsum",
   "version": "1.0.0",
   "description": "toolkit for making your own Lorem Ipsum generator - just BYO words",
-  "main": "index.js",
+  "files": [
+    "dist/**/*"
+  ],
+  "main": "dist/index.js",
   "scripts": {
     "test": "node -r ts-node/register ./node_modules/.bin/jasmine",
     "build": "rm -rf ./dist && npx tsc",
