@@ -1,7 +1,9 @@
 import createWordSequence from "./word-sequence";
+import { GeneratorOptions, LoremIpsumGenerator, Range } from "./types";
+import { randomWithin } from "./random-helpers";
 
 export function createGenerator(
-  vocabulary: Array<string>,
+  vocabulary: Set<string>,
   options?: GeneratorOptions
 ): LoremIpsumGenerator {
   const opts = {
@@ -9,11 +11,11 @@ export function createGenerator(
     ...options,
   };
 
-  if (!vocabulary || vocabulary.length < 2) {
-    throw new Error(`Vocabulary too small: length ${vocabulary.length}`);
+  if (!vocabulary || vocabulary.size < 2) {
+    throw new Error(`Vocabulary too small: size ${vocabulary.size}`);
   }
 
-  const sequence = createWordSequence(vocabulary);
+  const sequence = createWordSequence([...vocabulary]);
 
   const word = () => {
     const result = sequence.next();
@@ -26,30 +28,37 @@ export function createGenerator(
   const capitalize = (s: string): string =>
     `${s.substr(0, 1).toUpperCase()}${s.substring(1)}`;
 
-  function title(count?: number): string {
-    return `The ${capitalize(word())}`;
-  }
+  const capitalizedWord = (): string => capitalize(word());
 
-  const sentenceWordLength = (): number => {
-    return opts.sentenceWordRange.min;
+  const emptyArray = (size: number): Array<string> => new Array(size).fill("");
+
+  const templateBuilder = (range: Range) => {
+    return (sizeOverride?: number) => {
+      const size = sizeOverride ? sizeOverride : randomWithin(range);
+      return new Array(size).fill("");
+    };
   };
 
-  function sentence(): string {
-    return (
-      [
-        capitalize(word()),
-        ...new Array(sentenceWordLength()).fill("").map(word),
-      ].join(" ") + "."
-    );
-  }
+  const builders = {
+    sentence: templateBuilder(opts.sentenceWordRange),
+    title: templateBuilder(opts.titleWordRange),
+    paragraph: templateBuilder(opts.paragraphSentenceRange),
+  };
 
-  function paragraph(sentenceCount: number = 3): string {
-    return new Array(sentenceCount).fill("").map(sentence).join(" ");
-  }
+  const title = (count?: number): string =>
+    builders.title(count).map(capitalizedWord).join(" ");
 
-  function paragraphs(count?: number): Array<string> {
-    return new Array(count).fill("").map(paragraph);
-  }
+  const sentence = (wordCount?: number): string =>
+    builders
+      .sentence(wordCount)
+      .map((_, idx) => (idx === 0 ? capitalizedWord() : word()))
+      .join(" ") + ".";
+
+  const paragraph = (sentenceCount?: number): string =>
+    builders.paragraph(sentenceCount).map(sentence).join(" ");
+
+  const paragraphs = (count: number): Array<string> =>
+    emptyArray(count).map(() => paragraph());
 
   return {
     title,
@@ -59,24 +68,8 @@ export function createGenerator(
   };
 }
 
-export interface LoremIpsumGenerator {
-  title: (count?: number) => string;
-  sentence: () => string;
-  paragraph: (sentenceCount?: number) => string;
-  paragraphs: (count?: number) => Array<string>;
-}
-
-export interface Range {
-  min: number;
-  max: number;
-}
-
-export interface GeneratorOptions {
-  sentenceWordRange: Range;
-  paragraphSentenceRange: Range;
-}
-
-const defaultOptions: GeneratorOptions = {
-  sentenceWordRange: { min: 5, max: 10 },
-  paragraphSentenceRange: { min: 3, max: 7 },
+export const defaultOptions: GeneratorOptions = {
+  sentenceWordRange: { min: 3, max: 10 },
+  paragraphSentenceRange: { min: 3, max: 8 },
+  titleWordRange: { min: 1, max: 4 },
 };
