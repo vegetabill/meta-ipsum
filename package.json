@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "node -r ts-node/register ./node_modules/.bin/jasmine",
-    "build": "npx tsc"
+    "build": "rm -rf ./dist && npx tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p ."
   },
   "keywords": [],
   "author": "vegetabill",
@@ -15,7 +17,10 @@
     "@types/jasmine": "^3.5.11",
     "chance": "^1.1.6",
     "jasmine": "^3.5.0",
+    "prettier": "^2.0.5",
     "ts-node": "^8.10.2",
+    "tslint": "^6.1.2",
+    "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.9.6"
   }
 }

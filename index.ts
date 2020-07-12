@@ -1,1 +1,2 @@
-export * from "./lib/example-vocab";
+export * from "./lib/types";
+export { createGenerator } from "./lib/generator";
